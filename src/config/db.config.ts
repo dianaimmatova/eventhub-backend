@@ -4,16 +4,16 @@ import { ConfigService } from "@nestjs/config";
 
 
 export const databaseConfig = (
-    ConfigService: ConfigService 
+    configService: ConfigService 
 ):TypeOrmModuleOptions => ({
     type: "postgres",
-    host: ConfigService.getOrThrow<string>("DB_HOST"),
-    port: Number(ConfigService.getOrThrow<string>("DB_PORT")),
-    username: ConfigService.getOrThrow<string>("DB_USERNAME"),
-    password: ConfigService.getOrThrow<string>("DB_PASSWORD"),
-    database: ConfigService.getOrThrow<string>("DB_DATABASE"),
+    host: configService.getOrThrow<string>("DB_HOST"),
+    port: Number(configService.getOrThrow<string>("DB_PORT")),
+    username: configService.getOrThrow<string>("DB_USERNAME"),
+    password: configService.getOrThrow<string>("DB_PASSWORD"),
+    database: configService.getOrThrow<string>("DB_DATABASE"),
 
     autoLoadEntities: true,
 
-    synchronize: ConfigService.getOrThrow<string>("DB_SYNC") === "true"
+    synchronize: configService.getOrThrow<string>("DB_SYNC") === "true"
 })
