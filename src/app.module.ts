@@ -5,8 +5,9 @@ import { AppService } from './app.service.js';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { databaseConfig } from './config/db.config.js';
-import { Category } from './categories/category.entity.js';
 import { UserModule } from './users/user.module.js';
+import { CategoryModule } from './categories/category.module.js';
+import { EventsModule } from './events/events.module.js';
 
 export const { ObserveModule, ObserveInstrument } = createObserveModule();
 
@@ -20,8 +21,7 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
       inject: [ConfigService],
       useFactory: databaseConfig
     }), 
-    TypeOrmModule.forFeature([Category]),
-    UserModule
+    UserModule, CategoryModule, EventsModule
   ],
   controllers: [AppController],
   providers: [AppService],
