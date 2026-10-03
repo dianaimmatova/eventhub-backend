@@ -8,6 +8,7 @@ import { databaseConfig } from './config/db.config.js';
 import { UserModule } from './users/user.module.js';
 import { CategoryModule } from './categories/category.module.js';
 import { EventsModule } from './events/events.module.js';
+import { RegistrationsModule } from './registrations/registrations.module.js';
 
 export const { ObserveModule, ObserveInstrument } = createObserveModule();
 
@@ -21,7 +22,7 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
       inject: [ConfigService],
       useFactory: databaseConfig
     }), 
-    UserModule, CategoryModule, EventsModule
+    UserModule, CategoryModule, EventsModule, RegistrationsModule
   ],
   controllers: [AppController],
   providers: [AppService],
