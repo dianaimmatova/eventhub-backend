@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity } from "typeorm";
 import { BaseEntity } from "../helper/base.entity.js";
 
 
@@ -13,6 +13,8 @@ export class User extends BaseEntity {
     })
     email: string
 
-    @Column()
+    @Column({
+        select: false
+    })
     password: string
 }

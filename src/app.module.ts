@@ -9,6 +9,7 @@ import { UserModule } from './users/user.module.js';
 import { CategoryModule } from './categories/category.module.js';
 import { EventsModule } from './events/events.module.js';
 import { RegistrationsModule } from './registrations/registrations.module.js';
+import { AuthenticationModule } from '@nestjs/authentication';
 
 export const { ObserveModule, ObserveInstrument } = createObserveModule();
 
@@ -22,6 +23,12 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
       inject: [ConfigService],
       useFactory: databaseConfig
     }), 
+    AuthenticationModule.forRoot({
+      session: {
+        absoluteTtl: '14d',
+        idleTtl: '3d'
+      }
+    }),
     UserModule, CategoryModule, EventsModule, RegistrationsModule
   ],
   controllers: [AppController],
