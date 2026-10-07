@@ -14,3 +14,4 @@ export class UserCreateDTO {
     @Length(6, 64)
     password: string
 }
+
