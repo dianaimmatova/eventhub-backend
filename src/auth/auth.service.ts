@@ -5,7 +5,6 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from "bcrypt";
 import { type JwtSignOptions } from '@nestjs/jwt';
-import { User } from '../users/user.entity.js';
 
 
 @Injectable()

@@ -11,11 +11,6 @@ export class UserController{
         private readonly userService: UserService
     ) {}
 
-    @Get()
-    getAllUsers() {
-        return this.userService.findAll()
-    }
-
     @Post()
     createUser(@Body() userCreateDTO: UserCreateDTO ) {
         return this.userService.create(userCreateDTO)
