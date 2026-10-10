@@ -1,26 +1,42 @@
-import { Injectable } from '@nestjs/common';
-import { CreateAuthDto } from './dto/create-auth.dto.js';
-import { UpdateAuthDto } from './dto/update-auth.dto.js';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { LoginDTO } from './dto/login.dto.js';
+import { UserService } from '../users/user.service.js';
+import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
+import * as bcrypt from "bcrypt";
+import { type JwtSignOptions } from '@nestjs/jwt';
+
 
 @Injectable()
 export class AuthService {
-  create(createAuthDto: CreateAuthDto) {
-    return 'This action adds a new auth';
-  }
+  constructor(
+    private readonly userService: UserService,
+    private readonly jwtService: JwtService,
+    private readonly configService: ConfigService 
+  ){}
 
-  findAll() {
-    return `This action returns all auth`;
-  }
+  async login(loginDTO: LoginDTO) {
+    const user = await this.userService.findByEmailWithPassword(loginDTO.email)
+    if(!user) {
+      throw new UnauthorizedException('Неверная почта или пароль')
+    }
 
-  findOne(id: number) {
-    return `This action returns a #${id} auth`;
-  }
+    const isPasswordValid = await bcrypt.compare(loginDTO.password, user.password)
+    if(!isPasswordValid) {
+      throw new UnauthorizedException('Неверная почта или пароль')
+    }
 
-  update(id: number, updateAuthDto: UpdateAuthDto) {
-    return `This action updates a #${id} auth`;
-  }
+    const payload = { sub: user.id, email: user.email }
+    const accessToken = await this.jwtService.signAsync(payload, 
+      {secret: this.configService.getOrThrow<string>("JWT_ACCESS_SECRET"),
+      expiresIn: this.configService.getOrThrow<string>("JWT_ACCESS_EXPIRES") as JwtSignOptions['expiresIn']
+      });
+    
+    const refreshToken = await this.jwtService.signAsync(payload, 
+    {secret: this.configService.getOrThrow<string>("JWT_REFRESH_SECRET"),
+    expiresIn:this.configService.getOrThrow<string>("JWT_REFRESH_EXPIRES") as JwtSignOptions['expiresIn']
+    });
 
-  remove(id: number) {
-    return `This action removes a #${id} auth`;
+    return {accessToken, refreshToken}
   }
 }

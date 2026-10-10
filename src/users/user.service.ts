@@ -36,6 +36,19 @@ export class UserService{
         const user = await this.userRepository.save({ ...userCreateDTO, password: hash });
         return { id: user.id, name: user.name, email: user.email };
     }
+
+    async findByEmailWithPassword(email: string) {
+        return await this.userRepository.findOne({
+            where: {
+                email
+            },
+            select: {
+                id: true,
+                email: true,
+                password: true
+            }
+        })
+    }
 }
 
     
