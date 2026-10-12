@@ -4,8 +4,8 @@ import { UpdateEventDto } from './dto/update-event.dto.js';
 
 @Injectable()
 export class EventsService {
-  create(createEventDto: CreateEventDto) {
-    return 'This action adds a new event';
+  create(createEventDto: CreateEventDto, ) {
+    
   }
 
   findAll() {
