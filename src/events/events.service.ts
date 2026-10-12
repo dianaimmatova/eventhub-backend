@@ -23,7 +23,9 @@ export class EventsService {
   }
 
   findAll() {
-    return this.eventRepository.find();
+    return this.eventRepository.find({
+      relations: {category: true,}
+    });
   }
 
   findOne(id: number) {
