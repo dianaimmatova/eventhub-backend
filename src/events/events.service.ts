@@ -43,7 +43,10 @@ export class EventsService {
   async findOne(id: string) {
     const event = await this.eventRepository.findOne({
       where: { id },
-      relations: {category: true}
+      relations: {category: true, user: true},
+      select: {
+        user: {id: true, name: true}
+      }
     })
     if(!event) {
       throw new NotFoundException('Мероприятие не найдено')
