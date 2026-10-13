@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateEventDto } from './dto/create-event.dto.js';
 import { UpdateEventDto } from './dto/update-event.dto.js';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -40,8 +40,15 @@ export class EventsService {
     });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} event`;
+  async findOne(id: string) {
+    const event = await this.eventRepository.findOne({
+      where: { id },
+      relations: {category: true}
+    })
+    if(!event) {
+      throw new NotFoundException('Мероприятие не найдено')
+    }
+    return event
   }
 
   update(id: number, updateEventDto: UpdateEventDto) {
