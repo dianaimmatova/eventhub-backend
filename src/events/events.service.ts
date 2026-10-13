@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateEventDto } from './dto/create-event.dto.js';
 import { UpdateEventDto } from './dto/update-event.dto.js';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -54,11 +54,25 @@ export class EventsService {
     return event
   }
 
+  private async findOwnedEvent(id: string, userId: string) {
+    const event = await this.eventRepository.findOne({
+      where: { id }
+    })
+    if (!event) {
+      throw new NotFoundException('Мероприятие не найдено')
+    }
+    if (event.userId !== userId) {
+      throw new ForbiddenException('Нельзя изменять чужое мероприятие')
+    }
+    return event
+  }
+
   update(id: number, updateEventDto: UpdateEventDto) {
     return `This action updates a #${id} event`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} event`;
+  async remove(id: string, userId: string) {
+    const event = await this.findOwnedEvent(id, userId)
+    await this.eventRepository.remove(event)
   }
 }

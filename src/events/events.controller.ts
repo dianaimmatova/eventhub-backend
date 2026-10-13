@@ -7,13 +7,13 @@ import { FindEventDTO } from './dto/find-event.dto.js';
 
 @Controller('events')
 export class EventsController {
-  constructor(private readonly eventsService: EventsService) {}
+  constructor(private readonly eventsService: EventsService) { }
 
   @Post()
   @UseGuards(JwtAuthGuard)
   create(
     @Body() createEventDto: CreateEventDto,
-    @Req() request: {user: {id: string, email: string}}
+    @Req() request: { user: { id: string, email: string } }
   ) {
     return this.eventsService.create(createEventDto, request.user.id);
   }
@@ -31,12 +31,16 @@ export class EventsController {
   }
 
   @Patch(':id')
+  @UseGuards(JwtAuthGuard)
   update(@Param('id') id: string, @Body() updateEventDto: UpdateEventDto) {
     return this.eventsService.update(+id, updateEventDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.eventsService.remove(+id);
+  @UseGuards(JwtAuthGuard)
+  remove(@Param('id', ParseUUIDPipe) id: string,
+    @Req() request: { user: { id: string } }
+  ) {
+    return this.eventsService.remove(id, request.user.id);
   }
 }
