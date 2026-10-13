@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, Query } from '@nestjs/common';
 import { EventsService } from './events.service.js';
 import { CreateEventDto } from './dto/create-event.dto.js';
 import { UpdateEventDto } from './dto/update-event.dto.js';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard.js';
+import { FindEventDTO } from './dto/find-event.dto.js';
 
 @Controller('events')
 export class EventsController {
@@ -18,8 +19,10 @@ export class EventsController {
   }
 
   @Get()
-  findAll() {
-    return this.eventsService.findAll();
+  findAll(
+    @Query() findEventDto: FindEventDTO
+  ) {
+    return this.eventsService.findAll(findEventDto);
   }
 
   @Get(':id')

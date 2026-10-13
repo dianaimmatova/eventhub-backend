@@ -3,7 +3,8 @@ import { CreateEventDto } from './dto/create-event.dto.js';
 import { UpdateEventDto } from './dto/update-event.dto.js';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Event } from './event.entity.js';
-import { Repository } from 'typeorm';
+import { FindOptionsWhere, ILike, Repository } from 'typeorm';
+import { FindEventDTO } from './dto/find-event.dto.js';
 
 
 @Injectable()
@@ -22,9 +23,20 @@ export class EventsService {
     return event;
   }
 
-  findAll() {
+  findAll(findEventDto: FindEventDTO) {
+    const where: FindOptionsWhere<Event> = {};
+
+    if (findEventDto.search) {
+      where.title = ILike(`%${findEventDto.search}%`);
+    }
+
+    if (findEventDto.categoryId) {
+      where.category = {id: findEventDto.categoryId}
+    }
     return this.eventRepository.find({
-      relations: {category: true,}
+      relations: {category: true},
+      where,
+      order: {date: 'ASC'}
     });
   }
 
