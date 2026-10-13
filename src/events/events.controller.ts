@@ -32,8 +32,10 @@ export class EventsController {
 
   @Patch(':id')
   @UseGuards(JwtAuthGuard)
-  update(@Param('id') id: string, @Body() updateEventDto: UpdateEventDto) {
-    return this.eventsService.update(+id, updateEventDto);
+  update(@Param('id', ParseUUIDPipe) id: string,
+    @Body() updateEventDto: UpdateEventDto,
+    @Req() request: { user: { id: string } }) {
+    return this.eventsService.update(id, updateEventDto, request.user.id);
   }
 
   @Delete(':id')

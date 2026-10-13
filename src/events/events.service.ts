@@ -67,8 +67,10 @@ export class EventsService {
     return event
   }
 
-  update(id: number, updateEventDto: UpdateEventDto) {
-    return `This action updates a #${id} event`;
+  async update(id: string, updateEventDto: UpdateEventDto, userId: string) {
+    const event = await this.findOwnedEvent(id, userId)
+    this.eventRepository.merge(event, updateEventDto)
+    return await this.eventRepository.save(event)
   }
 
   async remove(id: string, userId: string) {
