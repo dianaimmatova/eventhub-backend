@@ -3,6 +3,7 @@ import { RegistrationsService } from './registrations.service.js';
 import { RegistrationsController } from './registrations.controller.js';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Registration } from './registration.entity.js';
+import { Event } from '../events/event.entity.js';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Registration])],
