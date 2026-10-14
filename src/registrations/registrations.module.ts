@@ -6,7 +6,7 @@ import { Registration } from './registration.entity.js';
 import { Event } from '../events/event.entity.js';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Registration])],
+  imports: [TypeOrmModule.forFeature([Registration, Event])],
   controllers: [RegistrationsController],
   providers: [RegistrationsService],
 })
