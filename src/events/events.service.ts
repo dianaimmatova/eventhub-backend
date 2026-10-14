@@ -5,21 +5,32 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Event } from './event.entity.js';
 import { FindOptionsWhere, ILike, Repository } from 'typeorm';
 import { FindEventDTO } from './dto/find-event.dto.js';
+import { Category } from '../categories/category.entity.js';
 
 
 @Injectable()
 export class EventsService {
   constructor(
     @InjectRepository(Event)
-    private readonly eventRepository: Repository<Event>
-  ){}
+    private readonly eventRepository: Repository<Event>,
 
-  async create(createEventDto: CreateEventDto, userId: string ) {
+    @InjectRepository(Category)
+    private readonly categoryRepository: Repository<Category>
+  ) { }
+
+  async create(createEventDto: CreateEventDto, userId: string) {
+    const category = await this.categoryRepository.findOne({
+      where: { id: createEventDto.categoryId }
+    })
+    if (!category) {
+      throw new NotFoundException('Категория не найдена')
+    }
     const event = await this.eventRepository.save({
-    ...createEventDto,
-    user: { id: userId },
-    category: { id: createEventDto.categoryId},
-  });
+      ...createEventDto,
+      user: { id: userId },
+      category,
+    });
+
     return event;
   }
 
@@ -31,24 +42,24 @@ export class EventsService {
     }
 
     if (findEventDto.categoryId) {
-      where.category = {id: findEventDto.categoryId}
+      where.category = { id: findEventDto.categoryId }
     }
     return this.eventRepository.find({
-      relations: {category: true},
+      relations: { category: true },
       where,
-      order: {date: 'ASC'}
+      order: { date: 'ASC' }
     });
   }
 
   async findOne(id: string) {
     const event = await this.eventRepository.findOne({
       where: { id },
-      relations: {category: true, user: true},
+      relations: { category: true, user: true },
       select: {
-        user: {id: true, name: true}
+        user: { id: true, name: true }
       }
     })
-    if(!event) {
+    if (!event) {
       throw new NotFoundException('Мероприятие не найдено')
     }
     return event
@@ -70,6 +81,16 @@ export class EventsService {
   async update(id: string, updateEventDto: UpdateEventDto, userId: string) {
     const event = await this.findOwnedEvent(id, userId)
     this.eventRepository.merge(event, updateEventDto)
+
+    if (updateEventDto.categoryId) {
+      const category = await this.categoryRepository.findOne({
+        where: { id: updateEventDto.categoryId }
+      })
+      if (!category) {
+        throw new NotFoundException('Категория не найдена')
+      }
+      event.category = category
+    }
     return await this.eventRepository.save(event)
   }
 
@@ -78,3 +99,4 @@ export class EventsService {
     await this.eventRepository.remove(event)
   }
 }
+
