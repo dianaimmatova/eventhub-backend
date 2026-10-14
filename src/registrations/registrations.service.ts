@@ -45,6 +45,15 @@ export class RegistrationsService {
     
   }
 
+  async findMine(userId: string) {
+    const registrations = await this.registrationRepository.find({
+      where: {user: {id: userId}},
+      relations: {event: {category: true}}
+    })
+
+    return registrations.map((registrations) => registrations.event)
+  }
+
   findAll() {
     return `This action returns all registrations`;
   }

@@ -98,5 +98,15 @@ export class EventsService {
     const event = await this.findOwnedEvent(id, userId)
     await this.eventRepository.remove(event)
   }
+
+
+  findMine(userId: string){
+    return this.eventRepository.find({
+      where: {user: {id: userId}},
+      relations: {category: true},
+      order: {date: 'ASC'}
+    })
+  }
+
 }
 

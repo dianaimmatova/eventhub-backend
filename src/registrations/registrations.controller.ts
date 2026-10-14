@@ -5,6 +5,7 @@ import { UpdateRegistrationDto } from './dto/update-registration.dto.js';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard.js';
 
 
+
 @Controller('registrations')
 export class RegistrationsController {
   constructor(private readonly registrationsService: RegistrationsService) { }
@@ -17,10 +18,17 @@ export class RegistrationsController {
     return this.registrationsService.create(createRegistrationDto, request.user.id);
   }
 
+  @Get('my')
+  @UseGuards(JwtAuthGuard)
+  findMine(@Req() request: {user: {id: string}}) {
+    return this.registrationsService.findMine(request.user.id)
+  }
+
   @Get()
   findAll() {
     return this.registrationsService.findAll();
   }
+
 
   @Get(':id')
   findOne(@Param('id') id: string) {

@@ -17,6 +17,12 @@ export class EventsController {
   ) {
     return this.eventsService.create(createEventDto, request.user.id);
   }
+  
+  @Get('my')
+  @UseGuards(JwtAuthGuard)
+  findMine(@Req() request: {user: {id: string}}) {
+    return this.eventsService.findMine(request.user.id)
+  }
 
   @Get()
   findAll(
