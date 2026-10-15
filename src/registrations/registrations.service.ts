@@ -54,19 +54,4 @@ export class RegistrationsService {
     return registrations.map((registrations) => registrations.event)
   }
 
-  findAll() {
-    return `This action returns all registrations`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} registration`;
-  }
-
-  update(id: number, updateRegistrationDto: UpdateRegistrationDto) {
-    return `This action updates a #${id} registration`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} registration`;
-  }
 }

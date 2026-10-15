@@ -3,6 +3,7 @@ import { RegistrationsService } from './registrations.service.js';
 import { CreateRegistrationDto } from './dto/create-registration.dto.js';
 import { UpdateRegistrationDto } from './dto/update-registration.dto.js';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard.js';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 
 
@@ -10,6 +11,7 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard.js';
 export class RegistrationsController {
   constructor(private readonly registrationsService: RegistrationsService) { }
 
+  @ApiBearerAuth()
   @Post()
   @UseGuards(JwtAuthGuard)
   create(@Body() createRegistrationDto: CreateRegistrationDto,
@@ -18,30 +20,12 @@ export class RegistrationsController {
     return this.registrationsService.create(createRegistrationDto, request.user.id);
   }
 
+
+  @ApiBearerAuth()
   @Get('my')
   @UseGuards(JwtAuthGuard)
   findMine(@Req() request: {user: {id: string}}) {
     return this.registrationsService.findMine(request.user.id)
   }
 
-  @Get()
-  findAll() {
-    return this.registrationsService.findAll();
-  }
-
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.registrationsService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateRegistrationDto: UpdateRegistrationDto) {
-    return this.registrationsService.update(+id, updateRegistrationDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.registrationsService.remove(+id);
-  }
 }
