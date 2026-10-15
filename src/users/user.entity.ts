@@ -1,5 +1,6 @@
 import { Column, Entity } from "typeorm";
 import { BaseEntity } from "../helper/base.entity.js";
+import { ApiHideProperty } from "@nestjs/swagger";
 
 
 
@@ -13,6 +14,8 @@ export class User extends BaseEntity {
     })
     email: string
 
+
+    @ApiHideProperty()
     @Column({
         select: false
     })

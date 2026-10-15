@@ -4,11 +4,13 @@ import { CreateEventDto } from './dto/create-event.dto.js';
 import { UpdateEventDto } from './dto/update-event.dto.js';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard.js';
 import { FindEventDTO } from './dto/find-event.dto.js';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('events')
 export class EventsController {
   constructor(private readonly eventsService: EventsService) { }
 
+  @ApiBearerAuth()
   @Post()
   @UseGuards(JwtAuthGuard)
   create(
@@ -18,6 +20,8 @@ export class EventsController {
     return this.eventsService.create(createEventDto, request.user.id);
   }
   
+
+  @ApiBearerAuth()
   @Get('my')
   @UseGuards(JwtAuthGuard)
   findMine(@Req() request: {user: {id: string}}) {
@@ -36,6 +40,7 @@ export class EventsController {
     return this.eventsService.findOne(id);
   }
 
+  @ApiBearerAuth()
   @Patch(':id')
   @UseGuards(JwtAuthGuard)
   update(@Param('id', ParseUUIDPipe) id: string,
@@ -44,6 +49,7 @@ export class EventsController {
     return this.eventsService.update(id, updateEventDto, request.user.id);
   }
 
+  @ApiBearerAuth()
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
   remove(@Param('id', ParseUUIDPipe) id: string,
