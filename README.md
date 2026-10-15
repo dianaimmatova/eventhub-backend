@@ -1,114 +1,79 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# EventHub — Backend
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Небольшой сервис для публикации, просмотра и записи на мероприятия. Что умеет:
+- регистрация
+- вход
+- афиша с поиском и фильтром 
+- создание мероприятий
+- запись на мероприятие
+- редактирование и удаление своих мероприятий
+- «Мои мероприятия» (созданные и записанные)
+- подсчёт свободных мест
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+Подробная документация API доступна в Swagger.
 
-## Description
+## Стек
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- NestJS, TypeScript
+- PostgreSQL, TypeORM
+- JWT (access и refresh токены)
+- Swagger
 
-## Project setup
+## Что нужно установить заранее
 
-```bash
-$ npm install
+- Node.js (v24.14.0) 
+- PostgreSQL ([скачать](https://www.postgresql.org/download))
+- любой клиент для PostgreSQL (например, DBeaver)
+
+
+## Установка и запуск
+
+1. Клонировать репозиторий
+    git clone https://github.com/dianaimmatova/eventhub-backend.git
+
+2. Установить зависимости
+    npm install
+
+3. Создать базу данных
+    создать в PostgreSQL пустую базу (например, eventhub) через DBeaver
+
+4. Создать файл `.env`
+    копировать .env.example в .env и заполнить значения (пароль от БД, секреты):
+      cp .env.example .env
+
+5. Запустить проект
+    npm run start:dev
+
+6. Oткрыть в браузере:
+    - сервер на http://localhost:3000
+    - документация на http://localhost:3000/api
+
+7. Добавить категории (после первого запуска, когда таблицы уже созданы)
+
+```sql
+INSERT INTO category (name)
+VALUES ('Концерт'), ('Лекция'), ('Выставка'), ('Спорт'),
+  ('Мастер-класс'), ('Кино'), ('Нетворкинг'), ('Фестиваль');
 ```
 
-## Compile and run the project
+## Переменные окружения
 
-```bash
-# development
-$ npm run start
+DB_HOST - адрес сервера PostgreSQL, обычно localhost
+DB_PORT - порт PostgreSQL, по умолчанию 5432
+DB_DATABASE - название базы данных (например, eventhub)
+DB_USERNAME - пользователь PostgreSQL (обычно postgres)
+DB_PASSWORD - пароль 
+DB_SYNC - true создаёт таблицы автоматически; на настоящем сервере выключают
 
-# watch mode
-$ npm run start:dev
+JWT_ACCESS_SECRET - секретный ключ для подписи access-токенов, сгенерировать: openssl rand -base64 32
+JWT_REFRESH_SECRET - секретный ключ для подписи refresh-токенов (должен отличаться от access), сгенерировать: openssl rand -base64 32
+JWT_ACCESS_EXPIRES - срок, который живет access токен. Пример: 15m     
+JWT_REFRESH_EXPIRES - срок, который живет refresh токен. Пример: 7d
 
-# production mode
-$ npm run start:prod
-```
+## Документация API
 
-## Run tests
+[Адрес Swagger.](http://localhost:3000/api)
 
-```bash
-# unit tests
-$ npm run test
+## Допущения
 
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
-
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
-
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Observability
-
-In production applications, observability is essential for understanding how your system behaves, detecting issues early, and maintaining reliable performance.
-
-[NestJS Observe](https://observe.nestjs.com) automatically instruments your NestJS application, giving you deep visibility into your system with minimal setup:
-
-- **Distributed tracing:** Follow requests across services and understand how they flow through your system.
-- **Waterfall analysis:** Visualize request execution and identify slow operations, bottlenecks, and unexpected delays.
-- **Performance analysis:** Analyze application performance in real time and quickly pinpoint areas that need optimization.
-- **Metrics:** Track key application and infrastructure metrics to understand system health and performance trends.
-- **Logging:** Centralize and correlate logs with traces and other telemetry to make debugging easier.
-- **Error tracking:** Detect errors quickly and investigate their root causes with the surrounding context.
-- **SLA monitoring:** Track service-level objectives and identify when your application is approaching or exceeding defined thresholds.
-- **Alarms and alerts:** Set up alerts for critical errors, performance degradation, SLA violations, and other anomalies so your team can react quickly.
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Auto-instrument your application with [NestJS Observer](https://observer.nestjs.com). Distributed tracing, metrics, and logging made easy. Error tracking and performance monitoring for your NestJS applications.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+У мероприятия одна категория, категории добавляются вручную, время хранится в UTC, изображение пока строка-ссылка.
