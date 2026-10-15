@@ -34,7 +34,7 @@ export class EventsService {
     return event;
   }
 
-  findAll(findEventDto: FindEventDTO) {
+  async findAll(findEventDto: FindEventDTO) {
     const where: FindOptionsWhere<Event> = {};
 
     if (findEventDto.search) {
@@ -44,17 +44,19 @@ export class EventsService {
     if (findEventDto.categoryId) {
       where.category = { id: findEventDto.categoryId }
     }
-    return this.eventRepository.find({
-      relations: { category: true },
+    const events = await this.eventRepository.find({
+      relations: { category: true, registrations: true },
       where,
       order: { date: 'ASC' }
     });
+    return  events.map((event) => this.withFreeSeats(event))
+
   }
 
   async findOne(id: string) {
     const event = await this.eventRepository.findOne({
       where: { id },
-      relations: { category: true, user: true },
+      relations: { category: true, user: true, registrations: true },
       select: {
         user: { id: true, name: true }
       }
@@ -62,7 +64,7 @@ export class EventsService {
     if (!event) {
       throw new NotFoundException('Мероприятие не найдено')
     }
-    return event
+    return this.withFreeSeats(event)
   }
 
   private async findOwnedEvent(id: string, userId: string) {
@@ -97,6 +99,20 @@ export class EventsService {
   async remove(id: string, userId: string) {
     const event = await this.findOwnedEvent(id, userId)
     await this.eventRepository.remove(event)
+  }
+
+
+  findMine(userId: string) {
+    return this.eventRepository.find({
+      where: { user: { id: userId } },
+      relations: { category: true },
+      order: { date: 'ASC' }
+    })
+  }
+
+  private withFreeSeats(event: Event) {
+    const { registrations, ...rest } = event;
+    return { ...rest, freeSeats: event.capacity - registrations.length };
   }
 }
 
