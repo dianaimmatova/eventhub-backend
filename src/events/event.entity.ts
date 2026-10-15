@@ -1,7 +1,8 @@
-import { Column, Entity, JoinColumn, ManyToOne} from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany} from "typeorm";
 import { BaseEntity } from "../helper/base.entity.js";
 import { User } from "../users/user.entity.js";
 import { Category } from "../categories/category.entity.js";
+import { Registration } from "../registrations/registration.entity.js";
 
 @Entity()
 export class Event extends BaseEntity {
@@ -35,4 +36,7 @@ export class Event extends BaseEntity {
 
     @ManyToOne(() => Category)
     category: Category
+
+    @OneToMany(() => Registration, (registration) => registration.event)
+    registrations: Registration[];
 }
