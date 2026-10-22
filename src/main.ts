@@ -8,18 +8,24 @@ async function bootstrap() {
     instrument: ObserveInstrument,
   });
 
+  app.enableCors({
+    origin: ['http://localhost:3000', 'https://github.com/dianaimmatova/eventhub-frontend.git'],
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE'
+  });
+
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
       forbidNonWhitelisted: true,
       transform: true
     })
+
   )
 
   const config = new DocumentBuilder()
     .addBearerAuth()
     .setTitle('EventHub API')
-    .setDescription('API для офиши мероприятий')
+    .setDescription('API для aфиши мероприятий')
     .setVersion('1.0')
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
