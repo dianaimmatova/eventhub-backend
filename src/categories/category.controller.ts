@@ -1,5 +1,16 @@
-import { Controller } from "@nestjs/common";
+import { Controller, Get } from "@nestjs/common";
+import { CategoryService } from "./category.service.js";
+import { ApiTags } from "@nestjs/swagger";
 
 
-@Controller()
-export class CategoryController{}
+@ApiTags('categories')
+@Controller('categories')
+export class CategoryController{
+    constructor(private readonly categoryService: CategoryService){}
+
+    @Get()
+    findAll(){
+        return this.categoryService.findAll()
+    }
+
+}
