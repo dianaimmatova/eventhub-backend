@@ -50,7 +50,7 @@ export class AuthService {
       secret: this.configService.getOrThrow<string>('JWT_REFRESH_SECRET'),
     });
 
-    return this.generateTokens( payload.id , payload.email );
+    return this.generateTokens( payload.sub , payload.email );
   } catch {
     throw new UnauthorizedException('Недействительный токен');
   }
