@@ -1,10 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, Query, ParseUUIDPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, Query, ParseUUIDPipe, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { EventsService } from './events.service.js';
 import { CreateEventDto } from './dto/create-event.dto.js';
 import { UpdateEventDto } from './dto/update-event.dto.js';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard.js';
 import { FindEventDTO } from './dto/find-event.dto.js';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiConsumes } from '@nestjs/swagger';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { imageUploadOptions } from '../config/upload.config.js';
 
 @Controller('events')
 export class EventsController {
@@ -19,12 +21,12 @@ export class EventsController {
   ) {
     return this.eventsService.create(createEventDto, request.user.id);
   }
-  
+
 
   @ApiBearerAuth()
   @Get('my')
   @UseGuards(JwtAuthGuard)
-  findMine(@Req() request: {user: {id: string}}) {
+  findMine(@Req() request: { user: { id: string } }) {
     return this.eventsService.findMine(request.user.id)
   }
 
@@ -33,6 +35,23 @@ export class EventsController {
     @Query() findEventDto: FindEventDTO
   ) {
     return this.eventsService.findAll(findEventDto);
+  }
+
+  @Post('upload')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        file: { type: 'string', format: 'binary' },
+      },
+    },
+  })
+  @UseInterceptors(FileInterceptor('file', imageUploadOptions))
+  upload(@UploadedFile() file: Express.Multer.File) {
+    return this.eventsService.getFileUrl(file);
   }
 
   @Get(':id')
