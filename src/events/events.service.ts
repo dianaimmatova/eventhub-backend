@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateEventDto } from './dto/create-event.dto.js';
 import { UpdateEventDto } from './dto/update-event.dto.js';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -114,5 +114,12 @@ export class EventsService {
     const { registrations, ...rest } = event;
     return { ...rest, freeSeats: event.capacity - registrations.length };
   }
+
+  getFileUrl(file: Express.Multer.File) {
+  if (!file) {
+    throw new BadRequestException('Файл не загружен');
+  }
+  return { url: `/uploads/${file.filename}` };
+}
 }
 
